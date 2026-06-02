@@ -10,10 +10,28 @@ const baloo = Baloo_2({ weight: ["500", "700", "800"], subsets: ["latin"], varia
 const quicksand = Quicksand({ weight: ["400", "500", "600", "700"], subsets: ["latin"], variable: "--nw-f-body" });
 const vt323 = VT323({ weight: "400", subsets: ["latin"], variable: "--nw-f-pixel" });
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://cumplenoe-sigma.vercel.app";
+const SITE_TITLE = "noe's world · Disney Channel Games";
+const SITE_DESCRIPTION =
+  "La web del cumple de Noe: descubre tu equipo, juega al quiz y sigue las novedades.";
+
 export const metadata: Metadata = {
-  title: "noe's world · Disney Channel Games",
-  description:
-    "La web del cumple de Noe: descubre tu equipo, juega al quiz y sigue las novedades.",
+  metadataBase: new URL(SITE_URL),
+  title: SITE_TITLE,
+  description: SITE_DESCRIPTION,
+  openGraph: {
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    url: "/",
+    siteName: "noe's world",
+    locale: "es_ES",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+  },
 };
 
 export default async function RootLayout({

@@ -1,4 +1,6 @@
 import { ImageResponse } from "next/og";
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
 
 // Image metadata
 export const alt = "noe's world · Disney Channel Games — la web del cumple de Noe";
@@ -10,13 +12,23 @@ export const contentType = "image/png";
 
 // Paleta tomada de app/globals.css (--nw-*)
 const PINK = "#ff3d9a";
-const PURPLE = "#a85cff";
-const VIOLET = "#7b3ff2";
-const BLUE = "#56d6ff";
 const YELLOW = "#ffe14d";
+const INK = "#4a1d57";
+
+async function dataUri(relPath: string, mime: string) {
+  const buf = await readFile(join(process.cwd(), relPath));
+  return `data:${mime};base64,${buf.toString("base64")}`;
+}
 
 // Image generation
-export default function Image() {
+export default async function Image() {
+  const [pacifico, baloo, demi, selena] = await Promise.all([
+    readFile(join(process.cwd(), "assets/fonts/Pacifico-Regular.ttf")),
+    readFile(join(process.cwd(), "assets/fonts/Baloo2-800.ttf")),
+    dataUri("public/stickers/demi.png", "image/png"),
+    dataUri("public/stickers/selena.png", "image/png"),
+  ]);
+
   return new ImageResponse(
     (
       <div
@@ -28,41 +40,72 @@ export default function Image() {
           alignItems: "center",
           justifyContent: "center",
           position: "relative",
-          backgroundColor: VIOLET,
-          backgroundImage: `radial-gradient(circle at 80% 15%, ${BLUE} 0%, transparent 45%), linear-gradient(135deg, ${PINK} 0%, ${PURPLE} 100%)`,
-          fontFamily: "sans-serif",
+          // Fondo holográfico — réplica de body::before en globals.css
+          backgroundColor: "#c860ff",
+          backgroundImage:
+            "radial-gradient(120% 80% at 20% 0%, #ff8fd0 0%, rgba(255,143,208,0) 55%)," +
+            "radial-gradient(120% 90% at 95% 15%, #b18cff 0%, rgba(177,140,255,0) 50%)," +
+            "radial-gradient(130% 90% at 50% 110%, #ff5fb0 0%, rgba(255,95,176,0) 55%)," +
+            "linear-gradient(160deg, #ff63b6 0%, #c860ff 100%)",
+          fontFamily: "Baloo",
           color: "#ffffff",
         }}
       >
+        {/* Stickers Y2K */}
+        <img
+          src={demi}
+          width={300}
+          height={300}
+          style={{
+            position: "absolute",
+            top: -28,
+            left: -34,
+            transform: "rotate(-12deg)",
+          }}
+        />
+        <img
+          src={selena}
+          width={300}
+          height={300}
+          style={{
+            position: "absolute",
+            bottom: -40,
+            right: -30,
+            transform: "rotate(11deg)",
+          }}
+        />
+
         {/* Etiqueta superior */}
         <div
           style={{
             display: "flex",
-            alignItems: "center",
-            gap: 16,
-            padding: "12px 30px",
+            padding: "10px 30px",
             borderRadius: 999,
-            background: "rgba(255,255,255,0.22)",
-            border: "2px solid rgba(255,255,255,0.6)",
+            background: "rgba(255,255,255,0.28)",
+            border: "3px solid rgba(255,255,255,0.85)",
             fontSize: 30,
-            fontWeight: 700,
-            letterSpacing: 2,
+            fontWeight: 800,
+            letterSpacing: 3,
             textTransform: "uppercase",
+            color: "#fff",
+            textShadow: "0 2px 0 rgba(123,63,242,0.4)",
           }}
         >
           Disney Channel Games
         </div>
 
-        {/* Título principal */}
+        {/* Título principal — Pacifico, como .nw-script */}
         <div
           style={{
             display: "flex",
-            marginTop: 28,
-            fontSize: 150,
-            fontWeight: 800,
-            lineHeight: 1,
-            letterSpacing: -2,
-            textShadow: "0 6px 0 rgba(74,29,87,0.35), 0 14px 30px rgba(74,29,87,0.4)",
+            marginTop: 18,
+            fontFamily: "Pacifico",
+            fontSize: 168,
+            lineHeight: 1.05,
+            color: "#ffffff",
+            // Aproxima el contorno blanco + sombra de .nw-script / .nw-holo-text
+            textShadow:
+              "3px 4px 0 rgba(123,63,242,0.55), -2px -2px 0 rgba(255,255,255,0.9), 2px -2px 0 rgba(255,255,255,0.9), -2px 2px 0 rgba(255,255,255,0.9), 0 6px 14px rgba(150,30,120,0.35)",
           }}
         >
           noe&apos;s world
@@ -72,12 +115,13 @@ export default function Image() {
         <div
           style={{
             display: "flex",
-            marginTop: 30,
-            maxWidth: 880,
+            marginTop: 22,
+            maxWidth: 760,
             textAlign: "center",
-            fontSize: 38,
-            fontWeight: 600,
-            color: "rgba(255,255,255,0.95)",
+            fontSize: 36,
+            fontWeight: 800,
+            color: "#fff",
+            textShadow: "0 2px 0 rgba(123,63,242,0.4)",
           }}
         >
           Descubre tu equipo, juega al quiz y sigue las novedades
@@ -87,15 +131,14 @@ export default function Image() {
         <div
           style={{
             display: "flex",
-            alignItems: "center",
-            gap: 14,
-            marginTop: 40,
-            padding: "14px 38px",
+            marginTop: 30,
+            padding: "12px 40px",
             borderRadius: 999,
             background: YELLOW,
-            color: "#4a1d57",
-            fontSize: 40,
+            color: INK,
+            fontSize: 42,
             fontWeight: 800,
+            border: `4px solid ${PINK}`,
           }}
         >
           27 · junio · 2026
@@ -104,6 +147,10 @@ export default function Image() {
     ),
     {
       ...size,
+      fonts: [
+        { name: "Pacifico", data: pacifico, weight: 400, style: "normal" },
+        { name: "Baloo", data: baloo, weight: 800, style: "normal" },
+      ],
     }
   );
 }

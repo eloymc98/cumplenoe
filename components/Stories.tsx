@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState, useTransition } from "react";
-import { FIXED_GAMES, VOTE_GAMES, type Game, type VoteGameId } from "@/config/games";
+import { FIXED_GAMES, VOTE_GAMES, type Game, type GameExtra, type VoteGameId } from "@/config/games";
 import { castVoteAction, markJuegosSeenAction } from "@/app/actions";
 import type { VoteState } from "@/lib/votes";
 import { Title, Sparkle, Bubble, Butterfly, LavaLamp, ModuleHead } from "@/components/nw";
@@ -37,19 +37,45 @@ function RuleList({ title, items }: { title: string; items: string[] }) {
   );
 }
 
+function ExtraBlock({ extra }: { extra: GameExtra }) {
+  return (
+    <div style={{ textAlign: "left", width: "100%", maxWidth: 360, margin: "0 auto" }}>
+      <div className="nw-bubble-font" style={{ fontSize: 12, color: "var(--nw-pink)", textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 4 }}>
+        {extra.title}
+      </div>
+      {extra.body && (
+        <div className="nw-bubble-font nw-white" style={{ fontSize: 13.5, lineHeight: 1.45 }}>
+          {extra.body}
+        </div>
+      )}
+      {extra.items && (
+        <ul className="nw-bubble-font nw-white" style={{ margin: 0, paddingLeft: 18, fontSize: 13.5, lineHeight: 1.45, display: "flex", flexDirection: "column", gap: 3 }}>
+          {extra.items.map((it, k) => (
+            <li key={k}>{it}</li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
 function GameSlide({ game }: { game: Game }) {
   return (
     <>
       <div style={{ fontSize: 52 }}>{game.emoji}</div>
       <Title size={30}>{game.name}</Title>
-      <div className="nw-bubble-font" style={{ fontSize: 15, color: "var(--nw-pink)" }}>
+      <div className="nw-bubble-font nw-white" style={{ fontSize: 14, lineHeight: 1.45, maxWidth: 360, margin: "0 auto" }}>
         {game.hook}
       </div>
-      <div className="nw-bubble-font nw-white" style={{ fontSize: 13, opacity: 0.85, maxWidth: 360, margin: "0 auto" }}>
-        👥 {game.participantes}
+      <div className="nw-bubble-font nw-white" style={{ fontSize: 13.5, lineHeight: 1.45, textAlign: "left", maxWidth: 360, margin: "0 auto" }}>
+        <span style={{ color: "var(--nw-pink)" }}>👥 Participantes: </span>
+        {game.participantes}
       </div>
       <RuleList title="Cómo se juega" items={game.comoSeJuega} />
       <RuleList title="Normas" items={game.normas} />
+      {game.extras?.map((extra) => (
+        <ExtraBlock key={extra.title} extra={extra} />
+      ))}
       <div className="nw-bubble-font nw-white" style={{ fontSize: 14, maxWidth: 360, margin: "0 auto" }}>
         🎯 {game.objetivo}
       </div>

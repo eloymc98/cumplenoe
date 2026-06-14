@@ -155,3 +155,23 @@ Persistencia en Redis usando **solo** las operaciones existentes de la interfaz 
 - Edición de contenido por admin (el contenido vive en `config/games.ts`).
 - Apuntarse con cantidades/cupos por ítem (lista abierta simple).
 - Auto-avance de slides y animaciones tipo Spotify Wrapped.
+
+## Revisión (2026-06-14, tras feedback)
+
+Cambios sobre el diseño original ya implementados:
+
+- **Stories con reglas completas:** cada juego muestra `participantes`, `cómo se
+  juega`, `normas` y `objetivo` (antes solo un `summary`). El slide es scrollable y la
+  navegación pasa a zonas de toque laterales + flechas inferiores (atrás/siguiente),
+  porque el contenido ya no cabe en un tap-anywhere.
+- **Material 100% común:** desaparece la distinción común vs. por-juego. Todo el material
+  (general + el de cada juego) es apuntable con lista abierta. El contenido se reorganiza
+  en `MATERIAL_GROUPS` (agrupado por juego para leerlo) + `MATERIAL_ITEMS` (lista plana).
+  `MaterialItemId` pasa a `string` (validación en runtime con `isMaterialItemId`).
+- **Muro con dos mensajes destacados separados:** en lugar de una tarjeta discreta, la home
+  muestra dos tarjetas grandes (`glossy`): una para los juegos y otra para el material.
+- **Aviso de "no visto":** la tarjeta de juegos lleva un badge "NUEVO" (animación
+  `nw-bob`) y borde resaltado mientras el participante no haya abierto las stories. Al
+  abrirlas se marca como visto en Redis (`lib/seen.ts`, set `seen:juegos`) vía
+  `markJuegosSeenAction`, llamada desde un `useEffect` en `Stories`. La home decide el
+  badge con `hasSeenJuegos(participant.id)`.

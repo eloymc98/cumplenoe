@@ -1,5 +1,5 @@
 import { getDB } from "@/lib/redis";
-import { MATERIAL_GENERAL, type MaterialItemId } from "@/config/games";
+import { MATERIAL_ITEMS, type MaterialItemId } from "@/config/games";
 import { getParticipant } from "@/lib/participants";
 
 const matKey = (id: MaterialItemId) => `material:${id}`;
@@ -12,7 +12,7 @@ export interface Volunteer {
 export type MaterialVolunteers = Record<MaterialItemId, Volunteer[]>;
 
 export function isMaterialItemId(id: string): id is MaterialItemId {
-  return MATERIAL_GENERAL.some((m) => m.id === id);
+  return MATERIAL_ITEMS.some((m) => m.id === id);
 }
 
 async function volunteersFor(itemId: MaterialItemId): Promise<Volunteer[]> {
@@ -28,7 +28,7 @@ async function volunteersFor(itemId: MaterialItemId): Promise<Volunteer[]> {
 /** Voluntarios apuntados a cada ítem de material común, con sus nombres. */
 export async function getMaterialState(): Promise<MaterialVolunteers> {
   const out = {} as MaterialVolunteers;
-  for (const item of MATERIAL_GENERAL) {
+  for (const item of MATERIAL_ITEMS) {
     out[item.id] = await volunteersFor(item.id);
   }
   return out;

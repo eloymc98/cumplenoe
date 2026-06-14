@@ -16,6 +16,7 @@ import {
   sessionToken,
 } from "@/lib/admin-auth";
 import { castVote, isVoteGameId, type VoteState } from "@/lib/votes";
+import { markJuegosSeen } from "@/lib/seen";
 import {
   toggleVolunteer,
   isMaterialItemId,
@@ -124,4 +125,12 @@ export async function toggleVolunteerAction(
   if (!isMaterialItemId(itemId)) return { ok: false as const };
   const state = await toggleVolunteer(participant.id, itemId);
   return { ok: true as const, state };
+}
+
+// --- Novedades vistas ---
+
+export async function markJuegosSeenAction(): Promise<void> {
+  const participant = await getCurrentParticipant();
+  if (!participant) return;
+  await markJuegosSeen(participant.id);
 }

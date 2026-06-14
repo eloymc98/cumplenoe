@@ -1,16 +1,16 @@
 import { test, beforeEach } from "node:test";
 import assert from "node:assert/strict";
 import { getDB } from "@/lib/redis";
-import { MATERIAL_GENERAL } from "@/config/games";
+import { MATERIAL_ITEMS } from "@/config/games";
 import { getMaterialState, toggleVolunteer, isMaterialItemId } from "@/lib/material";
 
 beforeEach(async () => {
-  await getDB().del(...MATERIAL_GENERAL.map((m) => `material:${m.id}`));
+  await getDB().del(...MATERIAL_ITEMS.map((m) => `material:${m.id}`));
 });
 
 test("estado inicial: ningún voluntario en ningún ítem", async () => {
   const state = await getMaterialState();
-  for (const m of MATERIAL_GENERAL) {
+  for (const m of MATERIAL_ITEMS) {
     assert.deepEqual(state[m.id], []);
   }
 });
@@ -35,5 +35,6 @@ test("varios pueden apuntarse al mismo ítem (lista abierta)", async () => {
 
 test("isMaterialItemId valida contra la config", () => {
   assert.equal(isMaterialItemId("altavoz"), true);
-  assert.equal(isMaterialItemId("toallas"), false);
+  assert.equal(isMaterialItemId("toallas"), true);
+  assert.equal(isMaterialItemId("no-existe"), false);
 });

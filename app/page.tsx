@@ -3,6 +3,7 @@ import { loginAction, logoutAction } from "@/app/actions";
 import { usingDevAuth } from "@/auth";
 import { getCurrentParticipant } from "@/lib/session";
 import { getPosts } from "@/lib/posts";
+import { hasSeenJuegos } from "@/lib/seen";
 import { BIRTHDAY } from "@/lib/dates";
 import { NOE_AGE, NOE_AVATAR, NOE_BIO } from "@/config/site";
 import Countdown from "@/components/Countdown";
@@ -88,6 +89,7 @@ export default async function Home() {
 
   const posts = await getPosts();
   const sealed = Boolean(participant.testCompletedAt);
+  const seenJuegos = await hasSeenJuegos(participant.id);
 
   return (
     <main className="nw-main nw-stack">
@@ -170,21 +172,70 @@ export default async function Home() {
 
       {/* feed */}
       <ModuleHead icon="📰">novedades</ModuleHead>
+
+      {/* novedad destacada: los juegos */}
       <Link
         href="/juegos"
         className="nw-card glossy"
-        style={{ padding: 14, display: "block", textDecoration: "none" }}
+        style={{
+          padding: 16,
+          display: "block",
+          textDecoration: "none",
+          position: "relative",
+          border: seenJuegos ? undefined : "2px solid var(--nw-pink)",
+          boxShadow: seenJuegos ? undefined : "0 0 0 4px rgba(255,61,154,0.18)",
+        }}
       >
-        <div className="nw-bubble-font" style={{ fontSize: 11, color: "var(--nw-pink)", marginBottom: 6 }}>
-          📌 nuevo
-        </div>
-        <div className="nw-pixel" style={{ fontSize: 18, color: "var(--nw-violet)" }}>
-          ✦ ¡los juegos del cumple! ✦
-        </div>
-        <div className="nw-bubble-font" style={{ fontSize: 13, color: "var(--nw-ink-soft)", marginTop: 4 }}>
-          descubre las pruebas y vota tu favorita →
+        {!seenJuegos && (
+          <span
+            className="nw-pixel"
+            style={{
+              position: "absolute",
+              top: -10,
+              left: 14,
+              background: "var(--nw-pink)",
+              color: "#fff",
+              fontSize: 11,
+              padding: "3px 9px",
+              borderRadius: 999,
+              animation: "nw-bob 1.4s ease-in-out infinite",
+            }}
+          >
+            🔴 NUEVO
+          </span>
+        )}
+        <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+          <span style={{ fontSize: 38 }}>🎉</span>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div className="nw-pixel" style={{ fontSize: 20, color: "var(--nw-violet)" }}>
+              ¡los juegos del cumple!
+            </div>
+            <div className="nw-bubble-font" style={{ fontSize: 13, color: "var(--nw-ink-soft)", marginTop: 3 }}>
+              descubre las pruebas y vota tu favorita →
+            </div>
+          </div>
         </div>
       </Link>
+
+      {/* novedad destacada: el material */}
+      <Link
+        href="/material"
+        className="nw-card glossy"
+        style={{ padding: 16, display: "block", textDecoration: "none" }}
+      >
+        <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+          <span style={{ fontSize: 38 }}>🎒</span>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div className="nw-pixel" style={{ fontSize: 20, color: "var(--nw-violet)" }}>
+              material del cumple
+            </div>
+            <div className="nw-bubble-font" style={{ fontSize: 13, color: "var(--nw-ink-soft)", marginTop: 3 }}>
+              apúntate a traer lo que puedas →
+            </div>
+          </div>
+        </div>
+      </Link>
+
       {posts.map((post, i) => (
         <article key={post.slug} className="nw-card" style={{ padding: 14 }}>
           {i === 0 && (

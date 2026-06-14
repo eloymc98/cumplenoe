@@ -44,7 +44,6 @@ export default function Stories({ initialVote }: { initialVote: VoteState }) {
   };
 
   const submitVote = (gameId: VoteGameId) => {
-    setVote((v) => v); // no-op para claridad; el estado real llega del server
     startTransition(async () => {
       const res = await castVoteAction(gameId);
       if (res.ok) setVote(res.state);

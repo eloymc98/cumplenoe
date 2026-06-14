@@ -225,7 +225,6 @@ export const MATERIAL_GROUPS: readonly MaterialGroup[] = [
     emoji: "💦",
     items: [
       { id: "pistolas", emoji: "🔫", label: "1-2 pistolas de agua" },
-      { id: "preguntas", emoji: "📋", label: "50-100 preguntas preparadas" },
       { id: "toallas-duelistas", emoji: "🏖", label: "2 toallas para los duelistas" },
     ],
   },

@@ -15,6 +15,13 @@ import {
   isAdmin,
   sessionToken,
 } from "@/lib/admin-auth";
+import { castVote, isVoteGameId, type VoteState } from "@/lib/votes";
+import { markJuegosSeen } from "@/lib/seen";
+import {
+  setVolunteer,
+  isMaterialItemId,
+  type MaterialVolunteers,
+} from "@/lib/material";
 
 const YEAR = 60 * 60 * 24 * 365;
 
@@ -94,4 +101,38 @@ export async function setRevealOverrideAction(formData: FormData) {
   const value = String(formData.get("value") ?? "") === "on";
   await setRevealOverride(value);
   redirect("/admin");
+}
+
+// --- Votación de juegos ---
+
+export async function castVoteAction(
+  gameId: string,
+): Promise<{ ok: false } | { ok: true; state: VoteState }> {
+  const participant = await getCurrentParticipant();
+  if (!participant) return { ok: false as const };
+  if (!isVoteGameId(gameId)) return { ok: false as const };
+  const state = await castVote(participant.id, gameId);
+  return { ok: true as const, state };
+}
+
+// --- Voluntarios de material ---
+
+export async function setVolunteerAction(
+  itemId: string,
+  qty: number,
+): Promise<{ ok: false } | { ok: true; state: MaterialVolunteers }> {
+  const participant = await getCurrentParticipant();
+  if (!participant) return { ok: false as const };
+  if (!isMaterialItemId(itemId)) return { ok: false as const };
+  const n = Number.isFinite(qty) ? Math.floor(qty) : 0;
+  const state = await setVolunteer(participant.id, itemId, n);
+  return { ok: true as const, state };
+}
+
+// --- Novedades vistas ---
+
+export async function markJuegosSeenAction(): Promise<void> {
+  const participant = await getCurrentParticipant();
+  if (!participant) return;
+  await markJuegosSeen(participant.id);
 }

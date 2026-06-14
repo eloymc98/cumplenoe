@@ -35,6 +35,9 @@ start: build ## Compila y arranca la build de producción
 lint: ## Pasa el linter
 	pnpm lint
 
+test: ## Pasa los unit tests
+	pnpm test
+
 typecheck: ## Comprueba los tipos sin emitir
 	pnpm exec tsc --noEmit
 

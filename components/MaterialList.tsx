@@ -20,8 +20,11 @@ function ItemRow({
   onSet: (itemId: MaterialItemId, qty: number) => void;
 }) {
   const mine = people.find((v) => v.id === myId);
-  const [qty, setQty] = useState(mine?.qty ?? 1);
+  // Texto libre para poder vaciar la casilla en móvil; solo se aceptan dígitos.
+  const [qty, setQty] = useState(String(mine?.qty ?? 1));
   const total = people.reduce((s, v) => s + v.qty, 0);
+  const parsed = parseInt(qty, 10);
+  const valid = Number.isFinite(parsed) && parsed >= 1;
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
@@ -32,17 +35,18 @@ function ItemRow({
         <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
           <input
             className="nw-input"
-            type="number"
-            min={1}
+            type="text"
+            inputMode="numeric"
+            pattern="[0-9]*"
             value={qty}
-            onChange={(e) => setQty(Math.max(1, Math.floor(Number(e.target.value) || 1)))}
+            onChange={(e) => setQty(e.target.value.replace(/[^0-9]/g, ""))}
             aria-label={`cantidad de ${item.label}`}
             style={{ width: 52, padding: "5px 6px", textAlign: "center", fontSize: 13 }}
           />
           <button
             className="nw-btn"
-            disabled={pending}
-            onClick={() => onSet(item.id, qty)}
+            disabled={pending || !valid}
+            onClick={() => onSet(item.id, parsed)}
             style={{ fontSize: 12, padding: "6px 12px", whiteSpace: "nowrap" }}
           >
             {mine ? "actualizar" : "apuntarme"}

@@ -170,6 +170,21 @@ export default async function Home() {
 
       {/* feed */}
       <ModuleHead icon="📰">novedades</ModuleHead>
+      <Link
+        href="/juegos"
+        className="nw-card glossy"
+        style={{ padding: 14, display: "block", textDecoration: "none" }}
+      >
+        <div className="nw-bubble-font" style={{ fontSize: 11, color: "var(--nw-pink)", marginBottom: 6 }}>
+          📌 nuevo
+        </div>
+        <div className="nw-pixel" style={{ fontSize: 18, color: "var(--nw-violet)" }}>
+          ✦ ¡los juegos del cumple! ✦
+        </div>
+        <div className="nw-bubble-font" style={{ fontSize: 13, color: "var(--nw-ink-soft)", marginTop: 4 }}>
+          descubre las pruebas y vota tu favorita →
+        </div>
+      </Link>
       {posts.map((post, i) => (
         <article key={post.slug} className="nw-card" style={{ padding: 14 }}>
           {i === 0 && (

@@ -2,7 +2,7 @@ import { test, beforeEach } from "node:test";
 import assert from "node:assert/strict";
 import { getDB } from "@/lib/redis";
 import { MATERIAL_ITEMS } from "@/config/games";
-import { getMaterialState, toggleVolunteer, isMaterialItemId } from "@/lib/material";
+import { getMaterialState, setVolunteer, isMaterialItemId } from "@/lib/material";
 
 beforeEach(async () => {
   await getDB().del(...MATERIAL_ITEMS.map((m) => `material:${m.id}`));
@@ -15,22 +15,28 @@ test("estado inicial: ningún voluntario en ningún ítem", async () => {
   }
 });
 
-test("apuntarse añade al participante (nombre cae al id si no existe)", async () => {
-  const state = await toggleVolunteer("ana", "altavoz");
-  assert.deepEqual(state["altavoz"], [{ id: "ana", name: "ana" }]);
+test("apuntarse guarda la cantidad (nombre cae al id si no existe)", async () => {
+  const state = await setVolunteer("ana", "altavoz", 2);
+  assert.deepEqual(state["altavoz"], [{ id: "ana", name: "ana", qty: 2 }]);
 });
 
-test("apuntarse de nuevo (toggle) elimina al participante", async () => {
-  await toggleVolunteer("ana", "altavoz");
-  const state = await toggleVolunteer("ana", "altavoz");
+test("actualizar la cantidad no duplica al participante", async () => {
+  await setVolunteer("ana", "toallas", 3);
+  const state = await setVolunteer("ana", "toallas", 6);
+  assert.deepEqual(state["toallas"], [{ id: "ana", name: "ana", qty: 6 }]);
+});
+
+test("cantidad <= 0 desapunta al participante", async () => {
+  await setVolunteer("ana", "altavoz", 2);
+  const state = await setVolunteer("ana", "altavoz", 0);
   assert.deepEqual(state["altavoz"], []);
 });
 
-test("varios pueden apuntarse al mismo ítem (lista abierta)", async () => {
-  await toggleVolunteer("ana", "conos");
-  const state = await toggleVolunteer("luis", "conos");
-  const ids = state["conos"].map((v) => v.id).sort();
-  assert.deepEqual(ids, ["ana", "luis"]);
+test("varios pueden apuntarse al mismo ítem con cantidades", async () => {
+  await setVolunteer("ana", "conos", 2);
+  const state = await setVolunteer("luis", "conos", 4);
+  const byId = Object.fromEntries(state["conos"].map((v) => [v.id, v.qty]));
+  assert.deepEqual(byId, { ana: 2, luis: 4 });
 });
 
 test("isMaterialItemId valida contra la config", () => {

@@ -18,7 +18,7 @@ import {
 import { castVote, isVoteGameId, type VoteState } from "@/lib/votes";
 import { markJuegosSeen } from "@/lib/seen";
 import {
-  toggleVolunteer,
+  setVolunteer,
   isMaterialItemId,
   type MaterialVolunteers,
 } from "@/lib/material";
@@ -117,13 +117,15 @@ export async function castVoteAction(
 
 // --- Voluntarios de material ---
 
-export async function toggleVolunteerAction(
+export async function setVolunteerAction(
   itemId: string,
+  qty: number,
 ): Promise<{ ok: false } | { ok: true; state: MaterialVolunteers }> {
   const participant = await getCurrentParticipant();
   if (!participant) return { ok: false as const };
   if (!isMaterialItemId(itemId)) return { ok: false as const };
-  const state = await toggleVolunteer(participant.id, itemId);
+  const n = Number.isFinite(qty) ? Math.floor(qty) : 0;
+  const state = await setVolunteer(participant.id, itemId, n);
   return { ok: true as const, state };
 }
 

@@ -7,25 +7,31 @@ const matKey = (id: MaterialItemId) => `material:${id}`;
 export interface Volunteer {
   id: string;
   name: string;
+  qty: number;
 }
 
 export type MaterialVolunteers = Record<MaterialItemId, Volunteer[]>;
 
-export function isMaterialItemId(id: string): id is MaterialItemId {
+export function isMaterialItemId(id: string): boolean {
   return MATERIAL_ITEMS.some((m) => m.id === id);
 }
 
+/** Mapa crudo participantId -> cantidad guardado para un ítem. */
+async function readRaw(itemId: MaterialItemId): Promise<Record<string, number>> {
+  return (await getDB().get<Record<string, number>>(matKey(itemId))) ?? {};
+}
+
 async function volunteersFor(itemId: MaterialItemId): Promise<Volunteer[]> {
-  const ids = await getDB().smembers(matKey(itemId));
+  const raw = await readRaw(itemId);
   return Promise.all(
-    ids.map(async (pid) => {
+    Object.entries(raw).map(async ([pid, qty]) => {
       const p = await getParticipant(pid);
-      return { id: pid, name: p?.name ?? pid };
+      return { id: pid, name: p?.name ?? pid, qty };
     }),
   );
 }
 
-/** Voluntarios apuntados a cada ítem de material común, con sus nombres. */
+/** Voluntarios apuntados a cada ítem, con su nombre y la cantidad que traen. */
 export async function getMaterialState(): Promise<MaterialVolunteers> {
   const out = {} as MaterialVolunteers;
   for (const item of MATERIAL_ITEMS) {
@@ -34,17 +40,22 @@ export async function getMaterialState(): Promise<MaterialVolunteers> {
   return out;
 }
 
-/** Apunta o quita (toggle) al participante de un ítem y devuelve el estado. */
-export async function toggleVolunteer(
+/**
+ * Apunta al participante a un ítem con una cantidad. Con `qty <= 0` se desapunta.
+ * Devuelve el estado actualizado.
+ */
+export async function setVolunteer(
   participantId: string,
   itemId: MaterialItemId,
+  qty: number,
 ): Promise<MaterialVolunteers> {
   const db = getDB();
-  const members = await db.smembers(matKey(itemId));
-  if (members.includes(participantId)) {
-    await db.srem(matKey(itemId), participantId);
+  const raw = await readRaw(itemId);
+  if (qty > 0) {
+    raw[participantId] = Math.floor(qty);
   } else {
-    await db.sadd(matKey(itemId), participantId);
+    delete raw[participantId];
   }
+  await db.set(matKey(itemId), raw);
   return getMaterialState();
 }

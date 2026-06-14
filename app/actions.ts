@@ -15,6 +15,12 @@ import {
   isAdmin,
   sessionToken,
 } from "@/lib/admin-auth";
+import { castVote, isVoteGameId, type VoteState } from "@/lib/votes";
+import {
+  toggleVolunteer,
+  isMaterialItemId,
+  type MaterialVolunteers,
+} from "@/lib/material";
 
 const YEAR = 60 * 60 * 24 * 365;
 
@@ -94,4 +100,28 @@ export async function setRevealOverrideAction(formData: FormData) {
   const value = String(formData.get("value") ?? "") === "on";
   await setRevealOverride(value);
   redirect("/admin");
+}
+
+// --- Votación de juegos ---
+
+export async function castVoteAction(
+  gameId: string,
+): Promise<{ ok: false } | { ok: true; state: VoteState }> {
+  const participant = await getCurrentParticipant();
+  if (!participant) return { ok: false as const };
+  if (!isVoteGameId(gameId)) return { ok: false as const };
+  const state = await castVote(participant.id, gameId);
+  return { ok: true as const, state };
+}
+
+// --- Voluntarios de material ---
+
+export async function toggleVolunteerAction(
+  itemId: string,
+): Promise<{ ok: false } | { ok: true; state: MaterialVolunteers }> {
+  const participant = await getCurrentParticipant();
+  if (!participant) return { ok: false as const };
+  if (!isMaterialItemId(itemId)) return { ok: false as const };
+  const state = await toggleVolunteer(participant.id, itemId);
+  return { ok: true as const, state };
 }

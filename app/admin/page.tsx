@@ -109,23 +109,20 @@ export default async function AdminPage({
                 </td>
                 <td>{p.suggestedTeam ? getTeam(p.suggestedTeam).shortName : "—"}</td>
                 <td>
-                  {p.finalTeam ? (
-                    <form action={setFinalTeamAction} className="admin-inline">
-                      <input type="hidden" name="id" value={p.id} />
-                      <select name="team" defaultValue={p.finalTeam} className="nw-select">
-                        {TEAM_IDS.map((id) => (
-                          <option key={id} value={id}>
-                            {TEAMS[id].shortName}
-                          </option>
-                        ))}
-                      </select>
-                      <button type="submit" className="nw-chip on">
-                        Guardar
-                      </button>
-                    </form>
-                  ) : (
-                    "—"
-                  )}
+                  <form action={setFinalTeamAction} className="admin-inline">
+                    <input type="hidden" name="id" value={p.id} />
+                    <select name="team" defaultValue={p.finalTeam ?? ""} className="nw-select">
+                      <option value="">— sin asignar —</option>
+                      {TEAM_IDS.map((id) => (
+                        <option key={id} value={id}>
+                          {TEAMS[id].shortName}
+                        </option>
+                      ))}
+                    </select>
+                    <button type="submit" className="nw-chip on">
+                      Guardar
+                    </button>
+                  </form>
                 </td>
               </tr>
             ))}

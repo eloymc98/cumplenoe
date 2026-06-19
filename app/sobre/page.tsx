@@ -5,6 +5,7 @@ import { getSettings } from "@/lib/settings";
 import { isRevealed, REVEAL_DATE } from "@/lib/dates";
 import { TEAMS, TEAM_IDS, getTeam } from "@/lib/teams";
 import Countdown from "@/components/Countdown";
+import TestResultCard from "@/components/TestResultCard";
 import { Title, Sparkle, Bubble, BigEnvelope } from "@/components/nw";
 
 export const dynamic = "force-dynamic";
@@ -12,7 +13,8 @@ export const dynamic = "force-dynamic";
 export default async function SobrePage() {
   const participant = await getCurrentParticipant();
   if (!participant) redirect("/");
-  if (!participant!.testCompletedAt || !participant!.finalTeam) redirect("/test");
+  // Basta con tener equipo final: el organizador puede asignarlo a mano sin test.
+  if (!participant!.finalTeam) redirect("/test");
 
   const settings = await getSettings();
   const revealed = isRevealed(settings.revealOverride);
@@ -58,6 +60,7 @@ export default async function SobrePage() {
   }
 
   const team = getTeam(participant!.finalTeam);
+  const suggested = participant!.suggestedTeam;
 
   return (
     <main className="nw-main nw-stack nw-center" style={{ alignItems: "center" }}>
@@ -85,6 +88,9 @@ export default async function SobrePage() {
           ))}
         </ul>
       </div>
+      {suggested && (
+        <TestResultCard team={getTeam(suggested)} matched={suggested === participant!.finalTeam} />
+      )}
       <Link href="/" className="nw-btn ghost">
         volver al muro
       </Link>

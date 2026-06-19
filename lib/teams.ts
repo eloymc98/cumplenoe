@@ -10,6 +10,7 @@ export interface Team {
   color: string; // color de referencia (hex)
   emoji: string;
   roster: string[];
+  traits: string[]; // rasgos de personalidad (resultado del test)
 }
 
 export const TEAMS: Record<TeamId, Team> = {
@@ -26,6 +27,7 @@ export const TEAMS: Record<TeamId, Team> = {
       "Jake T. Austin",
       "Mitchel Musso",
     ],
+    traits: ["valiente", "intens@", "épic@", "sin freno"],
   },
   azul: {
     id: "azul",
@@ -34,6 +36,7 @@ export const TEAMS: Record<TeamId, Team> = {
     color: "#2e7bff",
     emoji: "🌀",
     roster: ["Demi Lovato", "Cole Sprouse", "Vanessa Hudgens", "Corbin Bleu"],
+    traits: ["carismátic@", "sensible", "une al grupo"],
   },
   verde: {
     id: "verde",
@@ -42,6 +45,7 @@ export const TEAMS: Record<TeamId, Team> = {
     color: "#37d35a",
     emoji: "☄️",
     roster: ["David Henrie", "Dylan Sprouse", "Joe Jonas", "Jennifer Stone"],
+    traits: ["estratega", "líder", "mente maestra"],
   },
   amarillo: {
     id: "amarillo",
@@ -50,6 +54,7 @@ export const TEAMS: Record<TeamId, Team> = {
     color: "#ffd23b",
     emoji: "⚡",
     roster: ["Selena Gomez", "Miley Cyrus", "Kevin Jonas", "Andrea Guasch"],
+    traits: ["pura energía", "fiesta", "brilla"],
   },
 };
 

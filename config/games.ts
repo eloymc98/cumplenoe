@@ -267,6 +267,9 @@ export interface MaterialItem {
   id: string;
   emoji: string;
   label: string;
+  // Cantidad mínima necesaria, para calcular cuánto falta por apuntar.
+  // En rangos ("6-8") y extras ("+ reserva") se usa la base mínima.
+  need: number;
 }
 
 export interface MaterialGroup {
@@ -283,66 +286,66 @@ export const MATERIAL_GROUPS: readonly MaterialGroup[] = [
     title: "General",
     emoji: "🎒",
     items: [
-      { id: "altavoz", emoji: "🔊", label: "1 altavoz portátil" },
-      { id: "movil", emoji: "📱", label: "1 móvil con música y cronómetro" },
-      { id: "libreta", emoji: "📒", label: "1 libreta" },
-      { id: "bolis", emoji: "🖊", label: "2 bolígrafos" },
-      { id: "silbato", emoji: "📣", label: "1 silbato (opcional)" },
-      { id: "conos", emoji: "🚩", label: "4 conos o marcas" },
+      { id: "altavoz", emoji: "🔊", label: "1 altavoz portátil", need: 1 },
+      { id: "movil", emoji: "📱", label: "1 móvil con música y cronómetro", need: 1 },
+      { id: "libreta", emoji: "📒", label: "1 libreta", need: 1 },
+      { id: "bolis", emoji: "🖊", label: "2 bolígrafos", need: 2 },
+      { id: "silbato", emoji: "📣", label: "1 silbato (opcional)", need: 1 },
+      { id: "conos", emoji: "🚩", label: "4 conos o marcas", need: 4 },
     ],
   },
   {
     title: "Juego de las Toallas",
     emoji: "🏖",
-    items: [{ id: "toallas", emoji: "🏖", label: "6-8 toallas" }],
+    items: [{ id: "toallas", emoji: "🏖", label: "6-8 toallas", need: 6 }],
   },
   {
     title: "Trivial Splash",
     emoji: "💦",
     items: [
-      { id: "pistolas", emoji: "🔫", label: "1-2 pistolas de agua" },
-      { id: "toallas-duelistas", emoji: "🏖", label: "2 toallas para los duelistas" },
+      { id: "pistolas", emoji: "🔫", label: "1-2 pistolas de agua", need: 1 },
+      { id: "toallas-duelistas", emoji: "🏖", label: "2 toallas para los duelistas", need: 2 },
     ],
   },
   {
     title: "Relevo Acuático",
     emoji: "🥄🌊",
     items: [
-      { id: "cucharas", emoji: "🥄", label: "14 cucharas + 1 o 2 extra" },
-      { id: "pelotas", emoji: "⚪", label: "2 pelotas de ping pong + 2 de reserva" },
+      { id: "cucharas", emoji: "🥄", label: "14 cucharas + 1 o 2 extra", need: 14 },
+      { id: "pelotas", emoji: "⚪", label: "2 pelotas de ping pong + 2 de reserva", need: 2 },
     ],
   },
   {
     title: "Conexión",
     emoji: "🔗",
     items: [
-      { id: "papelitos", emoji: "📄", label: "30-40 papelitos o tarjetas" },
-      { id: "rotulador", emoji: "✏", label: "1 rotulador" },
+      { id: "papelitos", emoji: "📄", label: "30-40 papelitos o tarjetas", need: 30 },
+      { id: "rotulador", emoji: "✏", label: "1 rotulador", need: 1 },
     ],
   },
   {
     title: "¡Al Vaso!",
     emoji: "🥤",
-    items: [{ id: "vaso", emoji: "🥤", label: "1 vaso resistente" }],
+    items: [{ id: "vaso", emoji: "🥤", label: "1 vaso resistente", need: 1 }],
   },
   {
     title: "Tres en Raya Relay",
     emoji: "❌⭕",
-    items: [{ id: "petos", emoji: "🎽", label: "6 petos (3 por equipo)" }],
+    items: [{ id: "petos", emoji: "🎽", label: "6 petos (3 por equipo)", need: 6 }],
   },
   {
     title: "Roba Vidas",
     emoji: "🎽",
     note: "si sale elegido",
-    items: [{ id: "cintas", emoji: "🎀", label: "28 cintas o pañuelos (14 por equipo)" }],
+    items: [{ id: "cintas", emoji: "🎀", label: "28 cintas o pañuelos (14 por equipo)", need: 28 }],
   },
   {
     title: "Operación Esponja",
     emoji: "🧽",
     note: "si sale elegido",
     items: [
-      { id: "cubos", emoji: "🪣", label: "4 cubos" },
-      { id: "esponjas", emoji: "🧽", label: "2 esponjas grandes" },
+      { id: "cubos", emoji: "🪣", label: "4 cubos", need: 4 },
+      { id: "esponjas", emoji: "🧽", label: "2 esponjas grandes", need: 2 },
     ],
   },
 ];

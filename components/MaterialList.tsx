@@ -23,6 +23,8 @@ function ItemRow({
   // Texto libre para poder vaciar la casilla en móvil; solo se aceptan dígitos.
   const [qty, setQty] = useState(String(mine?.qty ?? 1));
   const total = people.reduce((s, v) => s + v.qty, 0);
+  const falta = Math.max(0, item.need - total);
+  const done = falta === 0;
   const parsed = parseInt(qty, 10);
   const valid = Number.isFinite(parsed) && parsed >= 1;
 
@@ -63,10 +65,40 @@ function ItemRow({
           )}
         </div>
       </div>
-      <div className="nw-bubble-font" style={{ fontSize: 12, color: "var(--nw-ink-soft)" }}>
-        {people.length === 0
-          ? "nadie aún"
-          : `${people.map((v) => `${v.name} ×${v.qty}`).join(", ")}  ·  total: ${total}`}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: 8,
+          flexWrap: "wrap",
+        }}
+      >
+        <span className="nw-bubble-font" style={{ fontSize: 12, color: "var(--nw-ink-soft)" }}>
+          {people.length === 0
+            ? "nadie aún"
+            : people.map((v) => `${v.name} ×${v.qty}`).join(", ")}
+        </span>
+        <span
+          className="nw-bubble-font"
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 6,
+            fontSize: 13,
+            fontWeight: 800,
+            padding: "3px 10px",
+            borderRadius: 999,
+            whiteSpace: "nowrap",
+            color: done ? "#1aa179" : "var(--nw-pink)",
+            background: done ? "rgba(138, 255, 214, 0.28)" : "rgba(255, 61, 154, 0.12)",
+            border: done
+              ? "1px solid rgba(26, 161, 121, 0.35)"
+              : "1px solid rgba(255, 61, 154, 0.4)",
+          }}
+        >
+          {done ? `✓ completo · ${total}/${item.need}` : `faltan ${falta} · ${total}/${item.need}`}
+        </span>
       </div>
     </div>
   );
